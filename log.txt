@@ -1,0 +1,58 @@
+size == 0
+empty.toString() == ""
+Test 1: PASSED
+
+size == 3 after 3 inserts
+toString() == "5 10 15 "
+Test 2: PASSED
+
+Duplication exception caught
+Size unchanged after failed insert
+Test 3: PASSED
+
+list[10] == 1
+list[5] == 0
+list[15] == 2
+list[99] == -1 (not found)
+Test 4: PASSED
+
+size == 2 after removal
+toString() == "5 15 "
+removed value not found 
+invalid_argument caught for missing value
+Test 5: PASSED
+
+head changed to 100
+runtime_error caught on empty list
+Test 6: PASSED
+
+copy has same content
+copy is independent (deep copy)
+Test 7: PASSED
+
+Test 8: operator=
+assignment copies content
+assigned is independent
+Test 8: PASSED
+
+list == same
+!(list != same)
+list != copy (different content)
+Test 9: PASSED
+
+smaller < larger
+smaller <= larger
+larger > smaller
+larger >= smaller
+Test 10: PASSED
+
+size == 0 after clear
+toString() == "" after clear
+Test 11: PASSED
+
+size == 1 after insert
+find(42) == 0
+size == 0 after remove
+Test 12: PASSED
+
+All tests passed

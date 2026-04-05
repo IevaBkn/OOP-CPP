@@ -1,0 +1,16 @@
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -g
+
+# Build both by default
+all: demo test
+
+demo: demo.cpp IP2.cpp IP2.h
+	$(CXX) $(CXXFLAGS) demo.cpp IP2.cpp -o demo
+
+test: test.cpp IP2.cpp IP2.h
+	$(CXX) $(CXXFLAGS) test.cpp IP2.cpp -o test
+
+clean:
+	rm -f demo test *.o log.txt
+
+.PHONY: all demo test clean
