@@ -5,7 +5,7 @@
 #include <string>
 
 using namespace std;
-using namespace dataStructure;
+using namespace DataStructure;
 
 void Log(ofstream& logFile, const string& msg) {
     cout << msg << endl;
@@ -32,7 +32,9 @@ int main() {
 
     // 2 test (Operator +=)
     doublyLinkedList list;
-    list += 5; list += 10; list += 15;
+    list += {0, 5};
+    list += {1, 10};
+    list += {2, 15};
     assert(list.size() == 3);
     Log(logFile, "size == 3 after 3 inserts");
     assert(list.toString() == "5 10 15 ");
@@ -41,7 +43,8 @@ int main() {
 
     // 3 test (Duplication exception)
     try {
-        list += 10; assert(false);
+        list += {1, 10};
+        assert(false);
     } catch (const DuplicateException&) {
         Log(logFile, "Duplication exception caught");
     }
@@ -61,7 +64,7 @@ int main() {
     Log(logFile, "Test 4: PASSED\n");
 
     // 5 test (Operator -=)
-    list -= 10;
+    list -= 1;
     assert(list.size() == 2);
     Log(logFile, "size == 2 after removal");
     assert(list.toString() == "5 15 ");
@@ -69,9 +72,10 @@ int main() {
     assert(list[10] == -1);
     Log(logFile, "removed value not found ");
     try {
-        list -= 999; assert(false);
-    } catch (const invalid_argument&) {
-        Log(logFile, "invalid_argument caught for missing value");
+        list -= 999;
+        assert(false);
+    } catch (const out_of_range&) {
+        Log(logFile, "out of range");
     }
     Log(logFile, "Test 5: PASSED\n");
 
@@ -81,7 +85,8 @@ int main() {
     Log(logFile, "head changed to 100");
     doublyLinkedList empty2;
     try {
-        empty2 *= 5; assert(false);
+        empty2 *= 5;
+        assert(false);
     } catch (const runtime_error&) {
         Log(logFile, "runtime_error caught on empty list");
     }
@@ -91,7 +96,7 @@ int main() {
     doublyLinkedList copy(list);
     assert(copy.toString() == list.toString());
     Log(logFile, "copy has same content");
-    copy += 200;
+    copy += {2, 200};
     assert(list.size() == 2 && copy.size() == 3);
     Log(logFile, "copy is independent (deep copy)");
     Log(logFile, "Test 7: PASSED\n");
@@ -102,14 +107,15 @@ int main() {
     assigned = list;
     assert(assigned.toString() == list.toString());
     Log(logFile, "assignment copies content");
-    assigned += 300;
+    assigned += {2, 300};
     assert(list.size() == 2 && assigned.size() == 3);
     Log(logFile, "assigned is independent");
     Log(logFile, "Test 8: PASSED\n");
 
     // 9 test (Operators +=, ==, !=)
     doublyLinkedList same;
-    same += 100; same += 15;
+    same += {0, 100};
+    same += {1, 15};
     assert(list == same);
     Log(logFile, "list == same");
     assert(!(list != same));
@@ -120,8 +126,10 @@ int main() {
 
     // 10 test (Comparison operators <, <=, >, >=)
     doublyLinkedList smaller, larger;
-    smaller += 1;
-    larger += 1; larger += 2; larger += 3;
+    smaller += {0, 1};
+    larger += {0, 1};
+    larger += {1, 2};
+    larger += {2, 3};
     assert(smaller < larger);
     Log(logFile, "smaller < larger");
     assert(smaller <= larger);
@@ -142,12 +150,12 @@ int main() {
 
     // 12 test (Single element list)
     doublyLinkedList single;
-    single += 42;
+    single += {0, 42};
     assert(single.size() == 1);
     Log(logFile, "size == 1 after insert");
     assert(single[42] == 0);
     Log(logFile, "find(42) == 0");
-    single -= 42;
+    single -= 0;
     assert(single.size() == 0);
     Log(logFile, "size == 0 after remove");
     Log(logFile, "Test 12: PASSED\n");
