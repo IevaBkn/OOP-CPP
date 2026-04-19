@@ -1,8 +1,9 @@
 #include "IP2.h"
 #include <iostream>
+#include <utility>
 
 using namespace std;
-using namespace dataStructure;
+using namespace DataStructure;
 
 int main() {
 
@@ -12,9 +13,9 @@ int main() {
 
     // Push back
     cout << "Operator += :\n";
-    list1 += 10;
-    list1 += 20;
-    list1 += 30;
+    list1 += {0, 10};
+    list1 += {1, 20};
+    list1 += {2, 30};
     cout << "After += 10, 20, 30: " << list1.toString() << "\n\n";
 
     // Search
@@ -45,7 +46,7 @@ int main() {
 
     // Comparing
     cout << "Size comparisons:\n";
-    list3 += 40;
+    list3 += {3, 40};
     cout << "list1.size()=" << list1.size() << ", list3.size()=" << list3.size() << "\n";
     cout << "list1 < list3: " << (list1 < list3) << "\n";
     cout << "list1 <= list3: " << (list1 <= list3) << "\n";
@@ -54,7 +55,7 @@ int main() {
 
     // Remove
     cout << "Operator -= :\n";
-    list1 -= 100;  // Remove the modified head
+    list1 -= 0;
     cout << "After -= 100: " << list1.toString() << "\n\n";
 
     // Clear
@@ -66,7 +67,7 @@ int main() {
     // Duplicating
     cout << "Exception on duplication:\n";
     try {
-        list2 += 20;
+        list2 += {1, 20};
     } catch (const runtime_error& e) {
         cout << "Caught: " << e.what() << "\n\n";
     }
@@ -76,7 +77,7 @@ int main() {
     cout << "Exception on remove not-found:\n";
     try {
         list2 -= 999;
-    } catch (const invalid_argument& e) {
+    } catch (const out_of_range& e) {
         cout << "Caught: " << e.what() << "\n\n";
     }
 
