@@ -19,7 +19,7 @@ Test 4: PASSED
 size == 2 after removal
 toString() == "5 15 "
 removed value not found 
-invalid_argument caught for missing value
+out of range
 Test 5: PASSED
 
 head changed to 100
