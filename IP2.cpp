@@ -1,37 +1,43 @@
 /*
- Attribution:
-- AI tools were used for guidance (Pimpl idiom, deep copies)
-- Some code/algorithms were taken from previous coursework of the past semester from my own work
-- Linked list logic was also adapted from geeksforgeeks.org web page
+- AI tools were used for learning/guidance (Pimpl idiom, deep copies)
+- Some code/algorithms were taken from my own previous coursework
 */
 
 #include "IP2.h"
 #include <sstream>
+#include <utility>
 #include <stdexcept>
 
 using namespace std;
 
-namespace dataStructure {
+namespace DataStructure {
 
 // No duplications allowed in doubly linked list
 DuplicateException::DuplicateException(const std::string& msg)
-: std::runtime_error(msg) {}
+    : std::runtime_error(msg)
+{
+}
 
 // Private Pimpl Idiom
 class doublyLinkedList::Impl {
     public:
         struct Node {
             int data;
-            Node* prev = nullptr;  // Default initializer
-            Node* next = nullptr;  // Default initializer
-            Node(int d) : data(d) {} // Constructor
+            Node* prev = nullptr; // Default initializer
+            Node* next = nullptr; // Default initializer
+            explicit Node(int d) : data(d) // Constructor
+            {
+            }
         };
 
         Node* head;
         Node* tail;
         int count;
 
-        Impl() : head(nullptr), tail(nullptr), count(0) {} // Constructor
+        Impl()
+            : head(nullptr), tail(nullptr), count(0) // Constructor
+        {
+        }
 
         // Destructor
         ~Impl() {
@@ -81,29 +87,6 @@ class doublyLinkedList::Impl {
             return -1;
         }
 
-        // Removes a given value
-        void remove(int value) {
-            Node* curr = head;
-            while (curr != nullptr) {
-                if (curr->data == value) {
-                    if (curr->prev) {
-                        curr->prev->next = curr->next;
-                    } else {
-                        head = curr->next;
-                    }
-                    if (curr->next) {
-                        curr->next->prev = curr->prev;
-                    } else {
-                        tail = curr->prev;
-                    }
-                    delete curr;
-                    count--;
-                    return;
-                }
-                curr = curr->next;
-            }
-            throw invalid_argument("Value not found");
-        }
     };
 
     doublyLinkedList::doublyLinkedList() { //Constructor
@@ -142,13 +125,70 @@ class doublyLinkedList::Impl {
     }
 
     // CRUD
-    doublyLinkedList& doublyLinkedList::operator+=(int value) { // Creates value
-        impl->push_back(value);
+
+    doublyLinkedList& doublyLinkedList::operator+=(const std::pair<int, int>& p) {
+        int pos = p.first;
+        int value = p.second;
+        
+        if (pos < 0 || pos > impl->count) {
+            throw std::out_of_range("Position out of range");
+        }
+        if (impl->find(value) != -1) {
+            throw DuplicateException("Duplication: " + std::to_string(value));
+        }
+        if (pos == impl->count) {
+            impl->push_back(value);
+            return *this;
+        }
+
+        Impl::Node* n = new Impl::Node(value);
+        
+        if (pos == 0) {
+            n->next = impl->head;
+            if (impl->head) {
+                impl->head->prev = n;
+            } else {
+                impl->tail = n;
+            }
+            impl->head = n;
+        } else {
+            Impl::Node* curr = impl->head;
+            for (int i = 0; i < pos; ++i) {
+                curr = curr->next;
+            }
+            n->prev = curr->prev;
+            n->next = curr;
+            if (curr->prev) {
+                curr->prev->next = n;
+            }
+            curr->prev = n;
+        }
+        impl->count++;
         return *this;
     }
 
-    doublyLinkedList& doublyLinkedList::operator-=(int value) { // Deletes
-        impl->remove(value);
+    doublyLinkedList& doublyLinkedList::operator-=(int position) {
+        if (position < 0 || position >= impl->count) {
+            throw std::out_of_range("Position out of range");
+        }
+        
+        Impl::Node* curr = impl->head;
+        for (int i = 0; i < position; ++i) {
+            curr = curr->next;
+        }
+        if (curr->prev) {
+            curr->prev->next = curr->next;
+        } else {
+            impl->head = curr->next;
+        }
+        if (curr->next) {
+            curr->next->prev = curr->prev;
+        } else {
+            impl->tail = curr->prev;
+        }
+        
+        delete curr;
+        impl->count--;
         return *this;
     }
 
@@ -163,20 +203,7 @@ class doublyLinkedList::Impl {
     // Comparing
 
     bool doublyLinkedList::operator==(const doublyLinkedList& other) const {
-        if (impl->count != other.impl->count) {
-            return false;
-        }
-        Impl::Node* a = impl->head;
-        Impl::Node* b = other.impl->head;
-
-        while (a != nullptr) {
-            if (a->data != b->data) {
-                return false;
-            }
-            a = a->next;
-            b = b->next;
-        }
-        return true;
+        return !(*this < other) && !(*this > other);
     }
 
     bool doublyLinkedList::operator!=(const doublyLinkedList& other) const {
@@ -184,19 +211,32 @@ class doublyLinkedList::Impl {
     }
 
     bool doublyLinkedList::operator<(const doublyLinkedList& other) const {
-        return impl->count < other.impl->count;
-    }
-
-    bool doublyLinkedList::operator<=(const doublyLinkedList& other) const {
-        return impl->count <= other.impl->count;
+        Impl::Node* a = impl->head;
+        Impl::Node* b = other.impl->head;
+        
+        while (a != nullptr && b != nullptr) {
+            if (a->data < b->data) {
+                return true;
+            }
+            if (a->data > b->data) {
+                return false;
+            }
+            a = a->next;
+            b = b->next;
+        }
+        return (a == nullptr && b != nullptr);
     }
 
     bool doublyLinkedList::operator>(const doublyLinkedList& other) const {
-        return impl->count > other.impl->count;
+        return other < *this;
+    }
+
+    bool doublyLinkedList::operator<=(const doublyLinkedList& other) const {
+        return !(other < *this);
     }
 
     bool doublyLinkedList::operator>=(const doublyLinkedList& other) const {
-        return impl->count >= other.impl->count;
+        return !(*this < other);
     }
 
     void doublyLinkedList::operator!() { // Clears all elements from list
