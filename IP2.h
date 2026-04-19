@@ -4,7 +4,7 @@
 #include <string>
 #include <stdexcept>
 
-namespace dataStructure {
+namespace DataStructure {
 
     class DuplicateException : public std::runtime_error {
         public:
@@ -25,9 +25,9 @@ namespace dataStructure {
         
         doublyLinkedList& operator=(const doublyLinkedList& other);
 
-        doublyLinkedList& operator+=(int value);
-        
-        doublyLinkedList& operator-=(int value);
+        doublyLinkedList& operator+=(const std::pair<int, int>& p);
+
+        doublyLinkedList& operator-=(int position);
         
         doublyLinkedList& operator*=(int value);
 
